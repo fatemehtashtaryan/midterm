@@ -1,5 +1,8 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class cardInformation {
     String imagePath;
@@ -27,5 +30,217 @@ public class cardInformation {
             reserve[i]=new cardInformation(null, null, null, 0, false, true, true, null);
         }
         return reserve;
+    }
+
+    public static class dialogCard extends JDialog{
+        private final player player;
+        private boolean possible=true;
+        public dialogCard(JFrame frame, String title, JPanel cardPnl, int x, int y,
+                          JPanel panel, cards card1, String imagePath,
+                          boolean giftCard, int numberOfCards, int bounds, cardInformation card, GameGraphic GameGraphic) {
+            super(frame, title, true);
+            int index = panel.getComponentZOrder(cardPnl);
+            int goldIndex = GameGraphic.left.getComponentZOrder(GameGraphic.goldPnl);
+            int warnIndex = GameGraphic.centerPnl.getComponentZOrder(GameGraphic.warning);
+            final player[] playerWarn = new player[1];
+            if(Main.turn) player = Main.player1;
+            else player = Main.player2;
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setSize(350, 250);
+            setLocation(x, y-50);
+            JPanel mainPnl = new JPanel();
+            mainPnl.setLayout(new BoxLayout(mainPnl, BoxLayout.X_AXIS));
+            JPanel leftButton = new JPanel();
+            JPanel rightButton = new JPanel();
+            leftButton.setLayout(new BoxLayout(leftButton, BoxLayout.Y_AXIS));
+            rightButton.setLayout(new BoxLayout(rightButton, BoxLayout.Y_AXIS));
+            JPanel n = new JPanel();
+            n.setLayout(new BoxLayout(n, BoxLayout.Y_AXIS));
+            ImageIcon imageIconB = new ImageIcon("src/buy.png");
+            Image imageB = imageIconB.getImage();
+            ImageIcon newImageB = new ImageIcon(imageB.getScaledInstance(75,75,Image.SCALE_SMOOTH));
+            JLabel buyLabel = new JLabel(newImageB);
+            ImageIcon imageIconH = new ImageIcon("src/hold.png");
+            Image imageH = imageIconH.getImage();
+            ImageIcon newImageH = new ImageIcon(imageH.getScaledInstance(75,75,Image.SCALE_SMOOTH));
+            JLabel holdLabel = new JLabel(newImageH);
+            JLabel buy = new JLabel("    BUY");
+            buy.setFont(new Font("Jokerman", Font.BOLD,20));
+            JLabel hold = new JLabel("   Hold");
+            hold.setFont(new Font("Jokerman", Font.BOLD,20));
+            n.add(Box.createRigidArea(new Dimension(0, 30)));
+            n.add(cardPnl);
+            n.add(Box.createRigidArea(new Dimension(0,30)));
+            if(Main.outOfRange) {
+                buyLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        for (int j = 0; j < card.array.length && possible; j++) {
+                            for (int i = 0; i < 5 && possible; i++) {
+                                if (player.coin[i].color.equals(card.array[j].color)) {
+                                    if (player.coin[i].price + player.coin[i + 5].price + player.goldCoin < card.array[j].price)
+                                        possible = false;
+                                }
+                            }
+                        }
+                        if (possible) {
+                            Main.turn = !Main.turn;
+                            GameGraphic.warning.removeAll();
+                            GameGraphic.centerPnl.remove(GameGraphic.warning);
+                            if (!Main.turn) playerWarn[0] = Main.player2;
+                            else playerWarn[0] = Main.player1;
+                            GameGraphic.warn = new JLabel(playerWarn[0].name + " is Your turn!");
+                            GameGraphic.warn.setFont(new Font("Freestyle Script", Font.BOLD, 30));
+                            if (!Main.turn) GameGraphic.warning.setBorder(new LineBorder(Main.player2Color, 7));
+                            else GameGraphic.warning.setBorder(new LineBorder(Main.player1Color, 7));
+                            GameGraphic.warning.add(GameGraphic.warn);
+                            GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
+                            GameGraphic.centerPnl.revalidate();
+                            GameGraphic.centerPnl.repaint();
+                            if (!Main.turn) {
+                                GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
+                                GameGraphic.getContentPane().setBackground(Main.player2Color);
+                            }
+                            if (Main.turn) {
+                                GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
+                                GameGraphic.getContentPane().setBackground(Main.player1Color);
+                            }
+                            for (int j = 0; j < card.array.length; j++) {
+                                for (int i = 0; i < 5; i++) {
+                                    if (player.coin[i].color.equals(card.array[j].color)) {
+                                        if (player.coin[i + 5].price >= card.array[j].price) card.array[j].price = 0;
+                                        if (player.coin[i + 5].price < card.array[j].price)
+                                            card.array[j].price -= player.coin[i + 5].price;
+                                        if (card.array[j].price > 0) {
+                                            if (player.coin[i].price < card.array[j].price) {
+                                                player.goldCoin--;
+                                                coins.goldCn++;
+                                                coins.coin[i].number += player.coin[i].price;
+                                                player.coin[i].price = 0;
+                                            }
+                                            if (player.coin[i].price >= card.array[j].price) {
+                                                player.coin[i].price -= card.array[j].price;
+                                                coins.coin[i].number += card.array[j].price;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            for (int i = 5; i < 10; i++) {
+                                if (player.coin[i].color.equals(card.colorGift)) player.coin[i].price++;
+                            }
+                            player.score += card.score;
+                            if (!card.isHold) panel.remove(cardPnl);
+                            if (numberOfCards >= bounds) {
+                                cardInformation card = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false);
+                                panel.add(card.panel, panel.getComponentZOrder(cardPnl));
+                                GameGraphic.addMouseListenerToCard(card.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, card);
+                                panel.revalidate();
+                                panel.repaint();
+                            }
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
+                            dispose();
+                        } else {
+                            Object[] option = {"OK"};
+                            JOptionPane.showOptionDialog(buyLabel.getParent(), "Your coin is not enough to buy this card!", "Oops!!",
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, option, option[0]);
+                            dispose();
+                        }
+                    }
+                });
+                if (!card.isHold)
+                    holdLabel.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            Object[] option = {"OK"};
+                            if (player.numberReserve < 3) {
+                                Main.turn = !Main.turn;
+                                GameGraphic.warning.removeAll();
+                                GameGraphic.centerPnl.remove(GameGraphic.warning);
+                                if (!Main.turn) playerWarn[0] = Main.player2;
+                                else playerWarn[0] = Main.player1;
+                                GameGraphic.warn = new JLabel(playerWarn[0].name + " is Your turn!");
+                                GameGraphic.warn.setFont(new Font("Freestyle Script", Font.BOLD, 30));
+                                if (!Main.turn) GameGraphic.warning.setBorder(new LineBorder(Main.player2Color, 7));
+                                else GameGraphic.warning.setBorder(new LineBorder(Main.player1Color, 7));
+                                GameGraphic.warning.add(GameGraphic.warn);
+                                GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
+                                GameGraphic.centerPnl.revalidate();
+                                GameGraphic.centerPnl.repaint();
+                                if (!Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player2Color);
+                                }
+                                if (Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player1Color);
+                                }
+                                if (coins.goldCn > 0) {
+                                    player.goldCoin++;
+                                    coins.goldCn--;
+                                    GameGraphic.goldPnl.removeAll();
+                                    GameGraphic.left.remove(GameGraphic.goldPnl);
+                                    coins.CircularImageButton gold = new coins.CircularImageButton("src/goldcoin.jpg", coins.goldCn);
+                                    GameGraphic.goldPnl.add(gold, BorderLayout.CENTER);
+                                    GameGraphic.left.add(GameGraphic.goldPnl, goldIndex);
+                                    GameGraphic.left.revalidate();
+                                    GameGraphic.left.repaint();
+                                }
+                                card.isHold = true;
+                                player.reserveCard[player.numberReserve] = card;
+                                player.numberReserve++;
+                                panel.remove(cardPnl);
+                                if (numberOfCards >= bounds) {
+                                    cardInformation card = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false);
+                                    panel.add(card.panel, index);
+                                    GameGraphic.addMouseListenerToCard(card.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, card);
+                                    panel.repaint();
+                                    panel.revalidate();
+                                }
+
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                dispose();
+                            } else
+                                JOptionPane.showOptionDialog(holdLabel.getParent(), "The capacity of your reservation cards has been completed!", "Oops!!",
+                                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, option, option[0]);
+                            dispose();
+                        }
+                    });
+            }
+            rightButton.add(buy);
+            rightButton.add(Box.createRigidArea(new Dimension(0, 15)));
+            rightButton.add(buyLabel);
+            if(!card.isHold) leftButton.add(hold);
+            leftButton.add(Box.createRigidArea(new Dimension(0, 15)));
+            if(!card.isHold) leftButton.add(holdLabel);
+            mainPnl.add(Box.createRigidArea(new Dimension(15,0)));
+            mainPnl.add(rightButton);
+            mainPnl.add(Box.createRigidArea(new Dimension(25,0)));
+            mainPnl.add(n);
+            mainPnl.add(Box.createRigidArea(new Dimension(25,0)));
+            if(!card.isHold) mainPnl.add(leftButton);
+            mainPnl.add(Box.createRigidArea(new Dimension(15,0)));
+            getContentPane().add(mainPnl);
+        }
+    }
+
+    public static void givePrizeCard(GameGraphic gameGraphic){
+        player player;
+        if(Main.turn) player = Main.player1;
+        else player = Main.player2;
+        for(int i =5; i<10; i++){
+            for(int j =0; j<GameGraphic.cardOne.array.length; j++) {
+          //      if(player.coin[i].color.equals(GameGraphic.cardOne.array[j].color))
+            }
+        }
     }
 }
