@@ -27,8 +27,8 @@ public class cards {
         arrayCoin[7].color = new Color(91, 230, 249 );
         arrayCoin[3].color = new Color(255, 156, 69);
         arrayCoin[8].color = new Color(255, 156, 69);
-        arrayCoin[4].color = new Color(194, 199, 40);
-        arrayCoin[9].color = new Color(194, 199, 40);
+        arrayCoin[4].color = new Color(247, 240, 40);
+        arrayCoin[9].color = new Color(247, 240, 40);
         return arrayCoin;
     }
 
@@ -52,14 +52,14 @@ public class cards {
     }
 
     private int getScore(){
-        score = random.nextInt(scoreEnd-scoreStart+1) +scoreStart;
+        score = (int) (Math.random()*(scoreEnd-scoreStart+1)) +scoreStart;
         return score;
     }
 
     public static Color getColorGift(){
         Color[] colorGift = {new Color(70, 231, 141), new Color(241, 78, 125),
                 new Color(91, 230, 249 ), new Color(255, 156, 69),
-                new Color(194, 199, 40)};
+                new Color(247, 240, 40)};
         int randomNumber = random.nextInt(500);
         return colorGift[randomNumber/100];
     }
@@ -127,7 +127,7 @@ public class cards {
         public void getColor(){
             List<Color> colorList = new ArrayList<>(Arrays.asList(new Color(70, 231, 141), new Color(241, 78, 125),
                     new Color(91, 230, 249 ), new Color(255, 156, 69),
-                    new Color(194, 199, 40)));
+                    new Color(247, 240, 40)));
             for(int i=0; i<number; i++) {
                 int randomNumber = random.nextInt(colorList.size() * 100);
                 array[i].color=colorList.get(randomNumber / 100);
@@ -138,12 +138,12 @@ public class cards {
     }
 
     public cardInformation firstLevel(cards card1, String imagePath, JPanel panel, boolean giftCard
-            , int numberOfCard, int bounds){
+            , int numberOfCard, int bounds, boolean isHold){
         JPanel cardMain = new JPanel();
         JPanel topPnl = new JPanel();
         ImageIcon image = new ImageIcon(imagePath);
         Image img = image.getImage();
-        ImageIcon newImage = new ImageIcon(img.getScaledInstance(75,75,Image.SCALE_SMOOTH));
+        ImageIcon newImage = new ImageIcon(img.getScaledInstance(70,70,Image.SCALE_SMOOTH));
         JLabel imageLabel = new JLabel(newImage);
         imageLabel.setPreferredSize(new Dimension(40,40));
         JPanel buttonPnl = new JPanel();
@@ -159,7 +159,8 @@ public class cards {
             scor = String.valueOf(scoreCard);
             gift = card1.getColorGift();
             topPnl.setLayout(new GridLayout(1,2));
-            score = new JLabel("           "+scor);
+            score = new JLabel("     "+scor);
+            score.setFont(new Font("Ravie", Font.BOLD,14));
         }
         else {
             Random random = new Random();
@@ -175,10 +176,9 @@ public class cards {
                 price = random.nextInt(4)+9;
                 number=4;
             }
-            value = new cards.colorIntPair(number, price).array;
-            gift = cards.getColorGift();
+            value = new colorIntPair(number, price).array;
+            gift = new Color(255, 161, 178);
         }
-
         topPnl.add(score);
         if(!giftCard)
             topPnl.add(new CircleLabel(String.valueOf('★'), gift));
@@ -189,9 +189,19 @@ public class cards {
             buttonPnl.setLayout(new GridLayout(1, value.length));
             buttonPnl.add(new CircleLabel(String.valueOf(cardsArray.price), cardsArray.color));
         }
+        Color background = null;
+        if(gift.equals(new Color(70, 231, 141))) background=new Color(194, 242, 214);
+        if(gift.equals(new Color(241, 78, 125))) background=new Color(247, 176, 196);
+        if(gift.equals(new Color(91, 230, 249))) background=new Color(193, 241, 247);
+        if(gift.equals(new Color(255, 156, 69))) background=new Color(245, 203, 179);
+        if(gift.equals(new Color(247, 240, 40))) background=new Color(252, 250, 217);
+        if(gift.equals(new Color(255, 161, 178))) background=new Color(252, 217, 219);
         cardMain.setPreferredSize(new Dimension(50,50));
         cardMain.add(buttonPnl, BorderLayout.SOUTH);
         cardMain.setBorder(new LineBorder(gift, 5));
+        cardMain.setBackground(background);
+        topPnl.setBackground(background);
+        buttonPnl.setBackground(background);
         return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, false, cardMain);
     }
 
@@ -232,4 +242,3 @@ public class cards {
         }
     }
 }
-
