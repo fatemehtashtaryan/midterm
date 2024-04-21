@@ -202,7 +202,7 @@ public class cards {
         cardMain.setBackground(background);
         topPnl.setBackground(background);
         buttonPnl.setBackground(background);
-        return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, false, cardMain);
+        return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, true, cardMain);
     }
 
     public static class CircleLabel extends JLabel {
