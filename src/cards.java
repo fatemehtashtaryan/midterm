@@ -138,7 +138,7 @@ public class cards {
     }
 
     public cardInformation firstLevel(cards card1, String imagePath, JPanel panel, boolean giftCard
-            , int numberOfCard, int bounds, boolean isHold){
+            , int numberOfCard, int bounds, boolean isHold, int numberCard){
         JPanel cardMain = new JPanel();
         JPanel topPnl = new JPanel();
         ImageIcon image = new ImageIcon(imagePath);
@@ -202,7 +202,7 @@ public class cards {
         cardMain.setBackground(background);
         topPnl.setBackground(background);
         buttonPnl.setBackground(background);
-        return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, true, cardMain);
+        return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, true, cardMain, numberCard);
     }
 
     public static class CircleLabel extends JLabel {
