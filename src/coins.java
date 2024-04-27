@@ -21,7 +21,8 @@ public class coins {
             new coins(4, "Pink Coin", new Color(241, 78, 125), "src/pinkBag.png"),
             new coins(4, "Blue Coin", new Color(91, 230, 249), "src/blueBag.png"),
             new coins(4, "Orange Coin", new Color(255, 156, 69), "src/orangeBag.png"),
-            new coins(4, "Yellow Coin", new Color(247, 240, 40), "src/yellowBag.png")};
+            new coins(4, "Yellow Coin", new Color(247, 240, 40), "src/yellowBag.png")
+    };
 
     public coins(int number, String name, Color colorCoin, String imagePath) {
         this.number = number;
@@ -129,9 +130,10 @@ public class coins {
     public static class dialogCoin extends JDialog {
         public dialogCoin(coins coin, int x, int y, GameGraphic GameGraphic) {
             super(GameGraphic, coin.name, true);
+            cardInformation.givePrizeCard(GameGraphic);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             setSize(200, 150);
-            setLocation(x, y);
+            setLocation(x+55, y);
             int warnIndex = GameGraphic.centerPnl.getComponentZOrder(GameGraphic.warning);
             JPanel mainPnl = new JPanel();
             JPanel topPnl = new JPanel();
@@ -149,17 +151,17 @@ public class coins {
             Image imageTwo = two.getImage();
             ImageIcon newImage2 = new ImageIcon(imageTwo.getScaledInstance(40, 40, Image.SCALE_SMOOTH));
             JLabel twoLabel = new JLabel(newImage2);
-            if(Main.outOfRange) {
+            player player;
+            if (Main.turn) player = Main.player1;
+            else player = Main.player2;
+            if(Main.outOfRange && !player.computer) {
                 oneLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         Object[] option = {"OK"};
-                        player player;
                         int sumCoins = 0;
                         if (coin.number > 0) {
                             coin.number--;
-                            if (Main.turn) player = Main.player1;
-                            else player = Main.player2;
                             for (int i = 0; i < 5; i++) {
                                 if (player.coin[i].color.equals(coin.colorCoin)) player.coin[i].price++;
                             }
@@ -205,6 +207,7 @@ public class coins {
                                 if (Main.turn) {
                                     GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
                                     GameGraphic.getContentPane().setBackground(Main.player1Color);
+                                    if(Main.player1.computer) CardOnPage.computerGame(GameGraphic);
                                 }
                             }
                         } else
@@ -272,6 +275,7 @@ public class coins {
                                 if (Main.turn) {
                                     GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
                                     GameGraphic.getContentPane().setBackground(Main.player1Color);
+                                    if(Main.player1.computer) CardOnPage.computerGame(GameGraphic);
                                 }
                                 dispose();
                             }
