@@ -14,7 +14,7 @@ public class GameGraphic extends JFrame {
     JPanel secondPnl = new JPanel();
     JPanel thirdPnl = new JPanel();
     JPanel[] cardPanel ={firstPnl, secondPnl, thirdPnl};
-    JPanel rightPnl = new JPanel();
+    public static JPanel rightPnl = new JPanel();
     public static JPanel left = new JPanel();
     public static JPanel goldPnl = new JPanel(new BorderLayout());
     JPanel centerPnl = new JPanel();
@@ -24,6 +24,9 @@ public class GameGraphic extends JFrame {
     public static cardInformation cardOne;
     public static cardInformation cardTwo;
     public static cardInformation cardThree;
+    public static JPanel one = new JPanel();
+    public static JPanel two = new JPanel();
+    public static JPanel three = new JPanel();
 
 
     public GameGraphic(){
@@ -55,17 +58,15 @@ public class GameGraphic extends JFrame {
                 comp.setBackground(Color.white);
             }
         }
+        if(Main.player1.computer) CardOnPage.computerGame(this);
         setVisible(true);
     }
 
     private void initRightPnl() {
         rightPnl.setLayout(new BoxLayout(rightPnl, BoxLayout.Y_AXIS));
         JPanel image = new JPanel();
-        JPanel one = new JPanel();
         one.setLayout(new BoxLayout(one, BoxLayout.X_AXIS));
-        JPanel two = new JPanel();
         two.setLayout(new BoxLayout(two, BoxLayout.X_AXIS));
-        JPanel three = new JPanel();
         three.setLayout(new BoxLayout(three, BoxLayout.X_AXIS));
         image.setLayout(new FlowLayout());
         ImageIcon slotIcon = new ImageIcon("src/prize.jpg");
@@ -78,19 +79,19 @@ public class GameGraphic extends JFrame {
         rightPnl.add(Box.createRigidArea(new Dimension(50,15)));
         one.add(Box.createRigidArea(new Dimension(20, 10)));
         cards card1 = new cards(8, 12);
-        cardOne = card1.firstLevel(card1,"src/prize1.png", rightPnl, true, cards.numberOfCardsPrize, 1, false);
+        cardOne = card1.firstLevel(card1,"src/prize1.png", rightPnl, true, cards.numberOfCardsPrize, 1, false, 0);
         one.add(cardOne.panel);
         one.add(Box.createRigidArea(new Dimension(20, 10)));
         rightPnl.add(one);
         rightPnl.add(Box.createRigidArea(new Dimension(10,15)));
         two.add(Box.createRigidArea(new Dimension(20, 10)));
-        cardTwo = card1.firstLevel(card1,"src/prize2.png", rightPnl, true, cards.numberOfCardsPrize, 2, false);
+        cardTwo = card1.firstLevel(card1,"src/prize2.png", rightPnl, true, cards.numberOfCardsPrize, 2, false, 1);
         two.add(cardTwo.panel);
         two.add(Box.createRigidArea(new Dimension(20, 10)));
         rightPnl.add(two);
         rightPnl.add(Box.createRigidArea(new Dimension(10,15)));
         three.add(Box.createRigidArea(new Dimension(20, 10)));
-        cardThree = card1.firstLevel(card1,"src/prize3.png", rightPnl, true, cards.numberOfCardsPrize, 3, false);
+        cardThree = card1.firstLevel(card1,"src/prize3.png", rightPnl, true, cards.numberOfCardsPrize, 3, false, 2);
         three.add(cardThree.panel);
         three.add(Box.createRigidArea(new Dimension(20, 10)));
         one.setBackground(Color.WHITE);
@@ -107,7 +108,7 @@ public class GameGraphic extends JFrame {
         left.setLayout(new GridLayout(7,1));
         ImageIcon slotIcon = new ImageIcon("src/slot.png");
         Image img = slotIcon.getImage();
-       // ImageIcon newImage = new ImageIcon(img.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+        // ImageIcon newImage = new ImageIcon(img.getScaledInstance(100,100,Image.SCALE_SMOOTH));
         JLabel slot = new JLabel(slotIcon);
         left.add(slot);
         goldPnl.add(coins.gold, BorderLayout.CENTER);
@@ -225,14 +226,24 @@ public class GameGraphic extends JFrame {
         }
     }
     public void initCenterPnl(){
+        firstPnl.setName("firstPnl");
+        secondPnl.setName("secondPnl");
+        thirdPnl.setName("thirdPnl");
         cards card1;
-        warn = new JLabel(Main.player1.name+" is Your turn!");
+        if(Main.turn){
+            warn = new JLabel(STR."\{Main.player1.name} is Your turn!");
+            warning.setBorder(new LineBorder(Main.player1Color, 5));
+        }
+        else{
+            warn = new JLabel(STR."\{Main.player2.name} is Your turn!");
+            warning.setBorder(new LineBorder(Main.player2Color, 5));
+        }
         warn.setFont(new Font("Freestyle Script", Font.BOLD, 30));
         warning.add(warn);
-        warning.setBorder(new LineBorder(Main.player1Color, 5));
         centerPnl.add(warning);
         centerPnl.setLayout(new BoxLayout(centerPnl, BoxLayout.Y_AXIS));
         centerPnl.add(Box.createRigidArea(new Dimension(0,40)));
+        int numberOfCard=0;
         for(int i=0; i<cardPanel.length; i++){
             cardPanel[i].setBackground(Color.WHITE);
             JPanel currentPnl = cardPanel[i];
@@ -248,11 +259,13 @@ public class GameGraphic extends JFrame {
                 int imagePath = (i+1)*10+j+1;
                 if(numberCards>=j+1){
                     card1 = new cards(startScor, endScore);
-                    cardInformation card = card1.firstLevel(card1, STR."src/\{imagePath}.png", currentPnl, false, numberCards, j+1, false);
+                    cardInformation card = card1.firstLevel(card1, STR."src/\{imagePath}.png", currentPnl, false, numberCards, j+1, false, numberOfCard);
                     currentPnl.add(card.panel);
+                    Main.cardsOnPage[numberOfCard]=new CardOnPage(card, currentPnl.getComponentZOrder(card.panel), currentPnl, card1);
                     addMouseListenerToCard(card.panel, card1, card.imagePath, currentPnl, false, numberCards, j+1, card);
                 }
                 if(j!=3) currentPnl.add(Box.createRigidArea(new Dimension(50, 0)));
+                numberOfCard++;
             }
 
             currentPnl.add(Box.createRigidArea(new Dimension(30, 0)));
@@ -264,7 +277,7 @@ public class GameGraphic extends JFrame {
     }
 
     public void addMouseListenerToCard(JPanel cardPnl, cards card1, String imagePath, JPanel panel,
-                                       boolean giftCard, int numberOfCards, int bounds, cardInformation card){
+                                              boolean giftCard, int numberOfCards, int bounds, cardInformation card){
         cardPnl.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
