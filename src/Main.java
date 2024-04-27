@@ -5,7 +5,8 @@ import java.awt.event.*;
 
 public class Main extends JFrame {
     static public ImageIcon image = new ImageIcon("src/amusement.png");
-    private boolean typeGame;//true=PvE/false=PvP
+    static public CardOnPage[] cardsOnPage = new CardOnPage[12];
+    static public boolean typeGame;//true=PvE/false=PvP
     static boolean turn = true; //true=player1/false=player2
     static public player player1;
     static public player player2;
@@ -65,8 +66,8 @@ public class Main extends JFrame {
         computerButton.setFont(font);
         downPnl.add(computerButton);
         downPnl.add(personButton);
-        personButton.setActionCommand("PvP");
-        computerButton.setActionCommand("PvE");
+        personButton.setActionCommand("PvP");//with player
+        computerButton.setActionCommand("PvE");//with computer
         ActionListener gameListener = new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,8 +83,9 @@ public class Main extends JFrame {
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                player1 =new player(cards.getArrayCoin(), 0, "Player1", cardInformation.getReseve(), 0, true, 0);
-                player2 =new player(cards.getArrayCoin(), 0, "Player2", cardInformation.getReseve(), 0, false, 0);
+                if(typeGame == true)player1 =new player(cards.getArrayCoin(), 0, "Computer", cardInformation.getReseve(), 0, true, 0, true);
+                else player1 =new player(cards.getArrayCoin(), 0, "Player1", cardInformation.getReseve(), 0, true, 0, false);
+                player2 =new player(cards.getArrayCoin(), 0, "Player2", cardInformation.getReseve(), 0, false, 0, false);
                 GameGraphic boardGraphics = new GameGraphic();
                 setVisible(false);
 //                boardGraphics.addWindowListener(new WindowAdapter() {
