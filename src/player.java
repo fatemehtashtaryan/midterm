@@ -10,7 +10,8 @@ public class player {
     int score;
     boolean turn;
     int numberReserve;
-    public player(cards.cardsArray[] coin, int goldCoin, String name, cardInformation[] reserveCard, int score, boolean turn, int numberReserve){
+    boolean computer;
+    public player(cards.cardsArray[] coin, int goldCoin, String name, cardInformation[] reserveCard, int score, boolean turn, int numberReserve, boolean computer){
         this.coin = coin;
         this.goldCoin = goldCoin;
         this.name = name;
@@ -18,6 +19,7 @@ public class player {
         this.score = score;
         this.turn = turn;
         this.numberReserve=numberReserve;
+        this.computer = computer;
     }
 
     public static class dialogPlayer extends JDialog {
@@ -118,6 +120,14 @@ public class player {
             three.setBorder(new LineBorder(Color.BLACK, 5));
             mainPnl.add(three);
             getContentPane().add(mainPnl);
+        }
+
+        public void computerPlayer(){
+            for(int i = 0; i<10; i++){
+                for(int j =0; j<12; j++){
+
+                }
+            }
         }
     }
 }
