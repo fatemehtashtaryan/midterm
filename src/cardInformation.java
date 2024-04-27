@@ -15,8 +15,9 @@ public class cardInformation {
     boolean holder;
     boolean isPrizeCard;
     JPanel panel;
+    int numberOfCard;
     public cardInformation(String imagePath, Color colorGift, cards.cardsArray[] array, int score,
-                           boolean isPrizeCard, boolean isHold, boolean holder, JPanel panel){
+                           boolean isPrizeCard, boolean isHold, boolean holder, JPanel panel, int numberOfCard){
         this.imagePath= imagePath;
         this.colorGift=colorGift;
         this.array=array;
@@ -25,11 +26,12 @@ public class cardInformation {
         this.isHold=isHold;
         this.holder=holder;
         this.panel = panel;
+        this.numberOfCard=numberOfCard;
     }
     public static cardInformation[] getReseve(){
         cardInformation[] reserve= new cardInformation[3];
         for(int i=0; i<3; i++){
-            reserve[i]=new cardInformation(null, null, null, 0, false, true, true, null);
+            reserve[i]=new cardInformation(null, null, null, 0, false, true, true, null, 0);
         }
         return reserve;
     }
@@ -41,6 +43,7 @@ public class cardInformation {
                           JPanel panel, cards card1, String imagePath,
                           boolean giftCard, int numberOfCards, int bounds, cardInformation card, GameGraphic GameGraphic) {
             super(frame, title, true);
+            cardInformation.givePrizeCard(GameGraphic);
             int index = panel.getComponentZOrder(cardPnl);
             int goldIndex = GameGraphic.left.getComponentZOrder(GameGraphic.goldPnl);
             int warnIndex = GameGraphic.centerPnl.getComponentZOrder(GameGraphic.warning);
@@ -82,16 +85,10 @@ public class cardInformation {
 
                 }
             });
-            if(Main.outOfRange) {
+            if(Main.outOfRange && !player.computer) {
                 buyLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!card.holder) {
-                            Object[] option = {"OK"};
-                            JOptionPane.showOptionDialog(buyLabel.getParent(), "This card has already been sold!", "Oops!!",
-                                    JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, option, option[0]);
-                            dispose();
-                        } else {
                             for (int j = 0; j < card.array.length && possible; j++) {
                                 for (int i = 0; i < 5 && possible; i++) {
                                     if (player.coin[i].color.equals(card.array[j].color)) {
@@ -114,14 +111,6 @@ public class cardInformation {
                                 GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
                                 GameGraphic.centerPnl.revalidate();
                                 GameGraphic.centerPnl.repaint();
-                                if (!Main.turn) {
-                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
-                                    GameGraphic.getContentPane().setBackground(Main.player2Color);
-                                }
-                                if (Main.turn) {
-                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
-                                    GameGraphic.getContentPane().setBackground(Main.player1Color);
-                                }
                                 for (int j = 0; j < card.array.length; j++) {
                                     for (int i = 0; i < 5; i++) {
                                         if (player.coin[i].color.equals(card.array[j].color)) {
@@ -133,6 +122,13 @@ public class cardInformation {
                                                 if (player.coin[i].price < card.array[j].price) {
                                                     player.goldCoin--;
                                                     coins.goldCn++;
+                                                    GameGraphic.goldPnl.removeAll();
+                                                    GameGraphic.left.remove(GameGraphic.goldPnl);
+                                                    coins.CircularImageButton gold = new coins.CircularImageButton("src/goldcoin.jpg", coins.goldCn);
+                                                    GameGraphic.goldPnl.add(gold, BorderLayout.CENTER);
+                                                    GameGraphic.left.add(GameGraphic.goldPnl, goldIndex);
+                                                    GameGraphic.left.revalidate();
+                                                    GameGraphic.left.repaint();
                                                     coins.coin[i].number += player.coin[i].price;
                                                     player.coin[i].price = 0;
                                                 }
@@ -148,13 +144,14 @@ public class cardInformation {
                                     if (player.coin[i].color.equals(card.colorGift)) player.coin[i].price++;
                                 }
                                 player.score += card.score;
-                                if (!card.isHold) panel.remove(cardPnl);
+                                panel.remove(cardPnl);
                                 if (numberOfCards >= bounds) {
-                                    cardInformation card = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false);
-                                    panel.add(card.panel, panel.getComponentZOrder(cardPnl));
-                                    GameGraphic.addMouseListenerToCard(card.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, card);
-                                    panel.revalidate();
+                                    cardInformation cards = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false, card.numberOfCard);
+                                    panel.add(cards.panel, index);
+                                    Main.cardsOnPage[card.numberOfCard]=new CardOnPage(cards, index, panel, card1);
+                                    GameGraphic.addMouseListenerToCard(cards.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, cards);
                                     panel.repaint();
+                                    panel.revalidate();
                                 }
                                 if (card.isHold) {
                                     card.holder = false;
@@ -164,15 +161,25 @@ public class cardInformation {
                                 } catch (InterruptedException ex) {
                                     throw new RuntimeException(ex);
                                 }
-
+                                if (!Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player2Color);
+                                }
+                                if (Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player1Color);
+                                    if(Main.player1.computer) CardOnPage.computerGame(GameGraphic);
+                                }
                                 dispose();
                             } else {
                                 Object[] option = {"OK"};
                                 JOptionPane.showOptionDialog(buyLabel.getParent(), "Your coin is not enough to buy this card!", "Oops!!",
                                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, option, option[0]);
+                                panel.add(cardPnl, index);
+                                panel.repaint();
+                                panel.revalidate();
                                 dispose();
                             }
-                        }
                     }
                 });
                 if (!card.isHold)
@@ -194,14 +201,6 @@ public class cardInformation {
                                 GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
                                 GameGraphic.centerPnl.revalidate();
                                 GameGraphic.centerPnl.repaint();
-                                if (!Main.turn) {
-                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
-                                    GameGraphic.getContentPane().setBackground(Main.player2Color);
-                                }
-                                if (Main.turn) {
-                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
-                                    GameGraphic.getContentPane().setBackground(Main.player1Color);
-                                }
                                 if (coins.goldCn > 0) {
                                     player.goldCoin++;
                                     coins.goldCn--;
@@ -218,9 +217,10 @@ public class cardInformation {
                                 player.numberReserve++;
                                 panel.remove(cardPnl);
                                 if (numberOfCards >= bounds) {
-                                    cardInformation card = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false);
-                                    panel.add(card.panel, index);
-                                    GameGraphic.addMouseListenerToCard(card.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, card);
+                                    cardInformation cards = card1.firstLevel(card1, imagePath, panel, giftCard, numberOfCards, bounds, false, card.numberOfCard);
+                                    panel.add(cards.panel, index);
+                                    Main.cardsOnPage[card.numberOfCard]=new CardOnPage(cards, index, panel, card1);
+                                    GameGraphic.addMouseListenerToCard(cards.panel, card1, card.imagePath, panel, false, numberOfCards, bounds, cards);
                                     panel.repaint();
                                     panel.revalidate();
                                 }
@@ -230,6 +230,15 @@ public class cardInformation {
                                 } catch (InterruptedException ex) {
                                     throw new RuntimeException(ex);
                                 }
+                                if (!Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player2Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player2Color);
+                                }
+                                if (Main.turn) {
+                                    GameGraphic.getRootPane().setBorder(BorderFactory.createMatteBorder(10, 4, 10, 4, Main.player1Color));
+                                    GameGraphic.getContentPane().setBackground(Main.player1Color);
+                                    if(Main.player1.computer) CardOnPage.computerGame(GameGraphic);
+                                }
                                 dispose();
                             } else
                                 JOptionPane.showOptionDialog(holdLabel.getParent(), "The capacity of your reservation cards has been completed!", "Oops!!",
@@ -238,6 +247,7 @@ public class cardInformation {
                         }
                     });
             }
+            else;
             rightButton.add(buy);
             rightButton.add(Box.createRigidArea(new Dimension(0, 15)));
             rightButton.add(buyLabel);
@@ -269,7 +279,19 @@ public class cardInformation {
                 }
             }
         }
-        if(prize1) player.score+=GameGraphic.cardOne.score;
+        if(prize1 && GameGraphic.cardOne.isPrizeCard){
+            player.score+=GameGraphic.cardOne.score;
+            GameGraphic.one.removeAll();
+            GameGraphic.rightPnl.remove(GameGraphic.one);
+            GameGraphic.cardOne.panel.setBackground(Color.CYAN);
+            GameGraphic.one.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.one.add(GameGraphic.cardOne.panel);
+            GameGraphic.one.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.rightPnl.add(GameGraphic.one, GameGraphic.rightPnl.getComponentZOrder(GameGraphic.one));
+            GameGraphic.rightPnl.revalidate();
+            GameGraphic.rightPnl.repaint();
+            GameGraphic.cardOne.isPrizeCard=false;
+        }
         if(!prize1) prize2=true;
         for(int i =5; i<10 && prize2; i++){
             for(int j =0; j<GameGraphic.cardTwo.array.length && prize2; j++) {
@@ -278,7 +300,19 @@ public class cardInformation {
                 }
             }
         }
-        if(prize2) player.score+=GameGraphic.cardTwo.score;
+        if(prize2 && GameGraphic.cardTwo.isPrizeCard){
+            player.score+=GameGraphic.cardTwo.score;
+            GameGraphic.two.removeAll();
+            GameGraphic.rightPnl.remove(GameGraphic.two);
+            GameGraphic.cardTwo.panel.setBackground(Color.CYAN);
+            GameGraphic.two.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.two.add(GameGraphic.cardTwo.panel);
+            GameGraphic.two.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.rightPnl.add(GameGraphic.two, GameGraphic.rightPnl.getComponentZOrder(GameGraphic.two));
+            GameGraphic.rightPnl.revalidate();
+            GameGraphic.rightPnl.repaint();
+            GameGraphic.cardTwo.isPrizeCard=false;
+        }
         if(!prize1 && !prize2) prize3=true;
         for(int i =5; i<10 && prize3; i++){
             for(int j =0; j<GameGraphic.cardThree.array.length && prize3; j++) {
@@ -287,6 +321,18 @@ public class cardInformation {
                 }
             }
         }
-        if(prize3) player.score+=GameGraphic.cardThree.score;
+        if(prize3 && GameGraphic.cardThree.isPrizeCard){
+            player.score+=GameGraphic.cardThree.score;
+            GameGraphic.three.removeAll();
+            GameGraphic.rightPnl.remove(GameGraphic.three);
+            GameGraphic.cardThree.panel.setBackground(Color.CYAN);
+            GameGraphic.three.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.three.add(GameGraphic.cardThree.panel);
+            GameGraphic.three.add(Box.createRigidArea(new Dimension(20, 10)));
+            GameGraphic.rightPnl.add(GameGraphic.three, GameGraphic.rightPnl.getComponentZOrder(GameGraphic.three));
+            GameGraphic.rightPnl.revalidate();
+            GameGraphic.rightPnl.repaint();
+            GameGraphic.cardThree.isPrizeCard=false;
+        }
     }
 }
