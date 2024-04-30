@@ -106,9 +106,9 @@ public class GameGraphic extends JFrame {
 
     private void initLeftPnl() {
         left.setLayout(new GridLayout(7,1));
-        ImageIcon slotIcon = new ImageIcon("src/slot.png");
+        ImageIcon slotIcon = new ImageIcon("src/slot-machine.png");
         Image img = slotIcon.getImage();
-        // ImageIcon newImage = new ImageIcon(img.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+        ImageIcon newImage = new ImageIcon(img.getScaledInstance(100,100,Image.SCALE_SMOOTH));
         JLabel slot = new JLabel(slotIcon);
         left.add(slot);
         goldPnl.add(coins.gold, BorderLayout.CENTER);
@@ -165,6 +165,7 @@ public class GameGraphic extends JFrame {
                 add(centerPnl, index);
                 revalidate();
                 repaint();
+                Main.turn=!Main.turn;
             }
         });
         howToPlay.setBackground(Color.pink);

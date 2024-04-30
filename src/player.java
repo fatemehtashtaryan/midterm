@@ -1,6 +1,9 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.io.File;
 
 public class player {
     cards.cardsArray[] coin;
@@ -121,13 +124,56 @@ public class player {
             mainPnl.add(three);
             getContentPane().add(mainPnl);
         }
-
-        public void computerPlayer(){
-            for(int i = 0; i<10; i++){
-                for(int j =0; j<12; j++){
-
-                }
+    }
+    public static void winner(GameGraphic GameGraphic){
+        boolean winner = false;
+        boolean winning = false;
+        if(Main.player2.score>=15){
+            winner=false;
+            winning=true;
+        }
+        else if(Main.player1.score>=15 && Main.turn==false){
+            winner=true;
+            winning=true;
+        }
+        if(winning){
+            int warnIndex = GameGraphic.centerPnl.getComponentZOrder(GameGraphic.warning);
+            GameGraphic.stopMusic();
+            playMusic();
+            if(!winner){
+                GameGraphic.warning.removeAll();
+                GameGraphic.centerPnl.remove(GameGraphic.warning);
+                GameGraphic.warn = new JLabel("Player 2! you won!!!");
+                GameGraphic.warn.setFont(new Font("Curlz MT", Font.BOLD, 40));
+                GameGraphic.warn.setBackground(Main.player2Color);
+                GameGraphic.warning.add(GameGraphic.warn);
+                GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
+                GameGraphic.centerPnl.revalidate();
+                GameGraphic.centerPnl.repaint();
             }
+            else {
+                GameGraphic.warning.removeAll();
+                GameGraphic.centerPnl.remove(GameGraphic.warning);
+                GameGraphic.warn = new JLabel("Player 1! you won!!!");
+                GameGraphic.warn.setFont(new Font("Curlz MT", Font.BOLD, 40));
+                GameGraphic.warn.setBackground(Main.player1Color);
+                GameGraphic.warning.add(GameGraphic.warn);
+                GameGraphic.centerPnl.add(GameGraphic.warning, warnIndex);
+                GameGraphic.centerPnl.revalidate();
+                GameGraphic.centerPnl.repaint();
+            }
+        }
+    }
+
+    private static void playMusic() {
+        try {
+            File file = new File("src/win.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+            GameGraphic.clip = AudioSystem.getClip();
+            GameGraphic.clip.open(audioStream);
+            GameGraphic.clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
