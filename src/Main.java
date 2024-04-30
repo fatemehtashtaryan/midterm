@@ -5,6 +5,8 @@ import java.awt.event.*;
 
 public class Main extends JFrame {
     static public ImageIcon image = new ImageIcon("src/amusement.png");
+    GameGraphic boardGraphics;
+    static public int turni=0;
     static public CardOnPage[] cardsOnPage = new CardOnPage[12];
     static public boolean typeGame;//true=PvE/false=PvP
     static boolean turn = true; //true=player1/false=player2
@@ -12,7 +14,7 @@ public class Main extends JFrame {
     static public player player2;
     static public boolean outOfRange = true;
     static public Color player1Color=new Color(142, 245, 169);
-    static public Color player2Color=new Color(245, 113, 113);
+    static public Color player2Color=new Color(45, 181, 149);
     private final Font font = new Font("tahoma", Font.BOLD,25);
     public Main() {
         Main.this.setIconImage(image.getImage());
@@ -80,21 +82,24 @@ public class Main extends JFrame {
                 }
             }
         };
+
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(typeGame == true)player1 =new player(cards.getArrayCoin(), 0, "Computer", cardInformation.getReseve(), 0, true, 0, true);
                 else player1 =new player(cards.getArrayCoin(), 0, "Player1", cardInformation.getReseve(), 0, true, 0, false);
                 player2 =new player(cards.getArrayCoin(), 0, "Player2", cardInformation.getReseve(), 0, false, 0, false);
-                GameGraphic boardGraphics = new GameGraphic();
+                if(turni==0) boardGraphics = new GameGraphic();
+                else boardGraphics.setVisible(true);
                 setVisible(false);
-//                boardGraphics.addWindowListener(new WindowAdapter() {
-//                    @Override
-//                    public void windowClosed(WindowEvent e) {
-//                        setVisible(true);
-//                        GameGraphic.stopMusic();
-//                    }
-//                });
+                turni++;
+                boardGraphics.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        setVisible(true);
+                        GameGraphic.stopMusic();
+                    }
+                });
             }
         });
         personButton.addActionListener(gameListener);
