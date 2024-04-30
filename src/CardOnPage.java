@@ -16,6 +16,7 @@ public class CardOnPage {
     }
 
     public static void computerGame(GameGraphic GameGraphic){
+        player.winner(GameGraphic);
         cardInformation.givePrizeCard(GameGraphic);
         int numberOfCards;
         boolean possible = true;
@@ -168,34 +169,40 @@ public class CardOnPage {
                 }
             }
         }
-//        int sumCoins = 0;
-//        for (int i = 0; i < 5; i++) {
-//            sumCoins += Main.player1.coin[i].price;
-//        }
-//        if(sumCoins>10){
-//            for(int f= 0; f<12; f++){
-//                for(int t=0; t<Main.cardsOnPage[f].card.array.length; t++){
-//                    for(int x =0; x<5; x++){
-//                        if(Main.cardsOnPage[f].card.array[t].color.equals(arrayCoinsCard[x].color)){
-//                            arrayCoinsCard[x].price+=Main.cardsOnPage[f].card.array[t].price;
-//                        }
-//                    }
-//                }
-//            }
-//            for(int x =0; x<5; x++) {
-//                for (int j = x + 1; j < 5; j++) {
-//                    if(arrayCoinsCard[x].price<arrayCoinsCard[j].price){
-//                        cards.cardsArray coin = arrayCoinsCard[x];
-//                        arrayCoinsCard[x]= arrayCoinsCard[j];
-//                        arrayCoinsCard[j] = coin;
-//                    }
-//                }
-//            }
-//            while (sumCoins<=10){
-//                for(int j =0; j<5; j++){
-//                }
-//            }
-//        }
+        int sumCoins = 0;
+        for (int i = 0; i < 5; i++) {
+            sumCoins += Main.player1.coin[i].price;
+        }
+        if(sumCoins>10){
+            for(int f= 0; f<12; f++){
+                for(int t=0; t<Main.cardsOnPage[f].card.array.length; t++){
+                    for(int x =0; x<5; x++){
+                        if(Main.cardsOnPage[f].card.array[t].color.equals(arrayCoinsCard[x].color)){
+                            arrayCoinsCard[x].price+=Main.cardsOnPage[f].card.array[t].price;
+                        }
+                    }
+                }
+            }
+            for(int x =0; x<5; x++) {
+                for (int j = x + 1; j < 5; j++) {
+                    if(arrayCoinsCard[x].price<arrayCoinsCard[j].price){
+                        cards.cardsArray coin = arrayCoinsCard[x];
+                        arrayCoinsCard[x]= arrayCoinsCard[j];
+                        arrayCoinsCard[j] = coin;
+                    }
+                }
+            }
+            for(int j =4; j>=0 && sumCoins>10; j--){
+                for(int t = 0; t<5 && sumCoins>10; t++){
+                    if(arrayCoinsCard[j].color.equals(Main.player1.coin[t].color)){
+                        if(Main.player1.coin[t].price>0){
+                            Main.player1.coin[t].price--;
+                            arrayCoinsCard[j].price++;
+                        }
+                    }
+                }
+            }
+        }
         int warnIndex = GameGraphic.centerPnl.getComponentZOrder(GameGraphic.warning);
         Main.turn = !Main.turn;
         GameGraphic.warning.removeAll();
