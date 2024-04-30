@@ -130,6 +130,7 @@ public class coins {
     public static class dialogCoin extends JDialog {
         public dialogCoin(coins coin, int x, int y, GameGraphic GameGraphic) {
             super(GameGraphic, coin.name, true);
+            player.winner(GameGraphic);
             cardInformation.givePrizeCard(GameGraphic);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             setSize(200, 150);
