@@ -1,4 +1,4 @@
-
+//This class holds coins information
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -16,7 +16,7 @@ public class coins {
     String imagePath;
     public static int goldCn = 5;
     public static CircularImageButton gold = new CircularImageButton("src/goldcoin.jpg", coins.goldCn);
-    public static coins[] coin = {
+    public static coins[] coin = {//this array is for slot machines
             new coins(4, "Green Coin", new Color(70, 231, 141), "src/greenBag.png"),
             new coins(4, "Pink Coin", new Color(241, 78, 125), "src/pinkBag.png"),
             new coins(4, "Blue Coin", new Color(91, 230, 249), "src/blueBag.png"),
@@ -126,7 +126,7 @@ public class coins {
 
         }
     }
-
+//JDialog for slot-machines
     public static class dialogCoin extends JDialog {
         public dialogCoin(coins coin, int x, int y, GameGraphic GameGraphic) {
             super(GameGraphic, coin.name, true);
@@ -301,7 +301,7 @@ public class coins {
             getContentPane().add(mainPnl);
         }
     }
-
+//JDialog for player's coins that use for reduction coins
     public static class dialogReduceCoin extends JDialog {
         public dialogReduceCoin(player player, int i, int x, int y, GameGraphic GameGraphic) {
             super(GameGraphic, "Reduction of Coins", true);

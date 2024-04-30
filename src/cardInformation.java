@@ -1,3 +1,4 @@
+//This class holds card information
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -40,6 +41,8 @@ public class cardInformation {
         private final player gamer;
         private boolean possible=true;
         private boolean sw=true;
+
+        //JDialog card  for when it is clicked
         public dialogCard(JFrame frame, String title, JPanel cardPnl, int x, int y,
                           JPanel panel, cards card1, String imagePath,
                           boolean giftCard, int numberOfCards, int bounds, cardInformation card, GameGraphic GameGraphic) {
@@ -89,7 +92,7 @@ public class cardInformation {
 
                 }
             });
-
+            //The player's coin count is not out of range and the reserved card is not purchased and the player is not a computer
             if(Main.outOfRange && !gamer.computer && !card.panel.getBackground().equals(Color.MAGENTA)) {
                 if(card.isHold){
                     if(gamer.turn==card.holder){
@@ -100,6 +103,7 @@ public class cardInformation {
                         possible=false;
                     }
                 }
+
                 buyLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -111,7 +115,7 @@ public class cardInformation {
                                     }
                                 }
                             }
-                            if (possible) {
+                            if (possible) {//if buying card is possible
                                 Main.turn = !Main.turn;
                                 GameGraphic.warning.removeAll();
                                 GameGraphic.centerPnl.remove(GameGraphic.warning);
@@ -198,6 +202,7 @@ public class cardInformation {
                             }
                     }
                 });
+                //If the card is reserved, it is not possible to reserve the card
                 if (!card.isHold) {
                     holdLabel.addMouseListener(new MouseAdapter() {
                         @Override
@@ -281,7 +286,7 @@ public class cardInformation {
             getContentPane().add(mainPnl);
         }
     }
-
+//Using this method in all game modes to check prize cards
     public static void givePrizeCard(GameGraphic gameGraphic){
         player player;
         boolean prize1 = true;

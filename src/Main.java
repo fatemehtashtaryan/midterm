@@ -37,7 +37,7 @@ public class Main extends JFrame {
         JButton guide2 = new JButton("Player2");
         guide1.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {//player1's information
                 int x = SwingUtilities.convertPoint(guide1, 0, 0, Main.this).x+400;
                 int y = SwingUtilities.convertPoint(guide1, 0, 0, Main.this).y+120;
                 new Setting("player1", x, y).setVisible(true);
@@ -45,7 +45,7 @@ public class Main extends JFrame {
         });
         guide2.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {//player2's information
                 int x = SwingUtilities.convertPoint(guide2, 0, 0, Main.this).x+400;
                 int y = SwingUtilities.convertPoint(guide2, 0, 0, Main.this).y+120;
                 new Setting("player2", x, y).setVisible(true);
@@ -72,7 +72,7 @@ public class Main extends JFrame {
         computerButton.setActionCommand("PvE");//with computer
         ActionListener gameListener = new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {//choosing type of game
                 if(e.getActionCommand().equals("PvE")){
                     personButton.setSelected(!personButton.isSelected());
                     typeGame=true;
@@ -83,7 +83,7 @@ public class Main extends JFrame {
             }
         };
 
-        start.addActionListener(new ActionListener() {
+        start.addActionListener(new ActionListener() {//starting new game
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(typeGame == true)player1 =new player(cards.getArrayCoin(), 0, "Computer", cardInformation.getReseve(), 0, true, 0, true);
@@ -115,7 +115,7 @@ public class Main extends JFrame {
         downPnl.add(start, BorderLayout.CENTER);
         add(downPnl);
     }
-
+//JDialog for giving player information
     public class Setting extends JDialog{
         public Setting(String name, int x, int y){
             super(Main.this, "Setting", true);

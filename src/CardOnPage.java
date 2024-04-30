@@ -1,3 +1,4 @@
+//This class is related to the computer player
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -14,7 +15,7 @@ public class CardOnPage {
         this.panel=panel;
         this.card1=card1;
     }
-
+//This method is for computer related functions when the user is playing with the computer
     public static void computerGame(GameGraphic GameGraphic){
         player.winner(GameGraphic);
         cardInformation.givePrizeCard(GameGraphic);
@@ -23,6 +24,7 @@ public class CardOnPage {
         cards card1;
         boolean buy =false;
         int goldIndex = GameGraphic.left.getComponentZOrder(GameGraphic.goldPnl);
+        //Buying cards based on their points
         for(int f =11; f>=0; f--) {
             for (int j = 0; j < Main.cardsOnPage[f].card.array.length && possible; j++) {
                 for (int i = 0; i < 5 && possible; i++) {
@@ -86,6 +88,7 @@ public class CardOnPage {
             }
             possible=!possible;
         }
+        //Card reservation based on opponent player's coins
         if(!buy){
             possible=true;
             for(int f = 11; f>=0 && !buy; f--){
@@ -131,6 +134,7 @@ public class CardOnPage {
                 if(!buy) possible=true;
             }
         }
+        //Buy coins based on the coins of the cards on the game screen
         if(!buy){
             for(int f= 0; f<12; f++){
                 for(int t=0; t<Main.cardsOnPage[f].card.array.length; t++){
@@ -173,6 +177,7 @@ public class CardOnPage {
         for (int i = 0; i < 5; i++) {
             sumCoins += Main.player1.coin[i].price;
         }
+        //Reducing the number of coins if the number is more than 10
         if(sumCoins>10){
             for(int f= 0; f<12; f++){
                 for(int t=0; t<Main.cardsOnPage[f].card.array.length; t++){

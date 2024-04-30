@@ -1,3 +1,4 @@
+//This class holds player information & JDialog for player info
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class player {
         this.numberReserve=numberReserve;
         this.computer = computer;
     }
-
+//JDialog for player and showing player information like its coins, reserved cards & score
     public static class dialogPlayer extends JDialog {
         public dialogPlayer(int x, int y, player player, GameGraphic GameGraphic){
             super(GameGraphic, player.name + " Information!", true);
@@ -125,6 +126,7 @@ public class player {
             getContentPane().add(mainPnl);
         }
     }
+    //checking winner in all methods in the game
     public static void winner(GameGraphic GameGraphic){
         boolean winner = false;
         boolean winning = false;
@@ -164,7 +166,7 @@ public class player {
             }
         }
     }
-
+//playing music for winner
     private static void playMusic() {
         try {
             File file = new File("src/win.wav");

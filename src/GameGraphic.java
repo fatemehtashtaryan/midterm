@@ -1,3 +1,4 @@
+//creating main board game
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -61,7 +62,7 @@ public class GameGraphic extends JFrame {
         if(Main.player1.computer) CardOnPage.computerGame(this);
         setVisible(true);
     }
-
+//for prize cards
     private void initRightPnl() {
         rightPnl.setLayout(new BoxLayout(rightPnl, BoxLayout.Y_AXIS));
         JPanel image = new JPanel();
@@ -103,7 +104,7 @@ public class GameGraphic extends JFrame {
         rightPnl.setPreferredSize(new Dimension(160,190));
         add(rightPnl, BorderLayout.EAST);
     }
-
+//for slot-machines
     private void initLeftPnl() {
         left.setLayout(new GridLayout(7,1));
         ImageIcon slotIcon = new ImageIcon("src/slot-machine.png");
@@ -122,7 +123,7 @@ public class GameGraphic extends JFrame {
         left.setPreferredSize(new Dimension(120, 190));
         add(left, BorderLayout.WEST);
     }
-
+//for players information and playing music
     private void initTopPnl() {
         JPanel top = new JPanel();
         top.setBackground(new Color(212, 113, 245));
@@ -151,23 +152,25 @@ public class GameGraphic extends JFrame {
         player2.setBackground(Main.player2Color);
         addMouseListenerToPlayers(player2, false);
         JButton howToPlay = new JButton("Refresh Cards");
-        howToPlay.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int index = getComponentZOrder(centerPnl);
-                warning.removeAll();
-                firstPnl.removeAll();
-                secondPnl.removeAll();
-                thirdPnl.removeAll();
-                centerPnl.removeAll();
-                remove(centerPnl);
-                initCenterPnl();
-                add(centerPnl, index);
-                revalidate();
-                repaint();
-                Main.turn=!Main.turn;
-            }
-        });
+        if(!Main.typeGame) {
+            howToPlay.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int index = getComponentZOrder(centerPnl);
+                    warning.removeAll();
+                    firstPnl.removeAll();
+                    secondPnl.removeAll();
+                    thirdPnl.removeAll();
+                    centerPnl.removeAll();
+                    remove(centerPnl);
+                    initCenterPnl();
+                    add(centerPnl, index);
+                    revalidate();
+                    repaint();
+                    Main.turn = !Main.turn;
+                }
+            });
+        }
         howToPlay.setBackground(Color.pink);
         JLabel target = new JLabel("    TARGET = 15");
         target.setFont(new Font("Chiller", Font.BOLD, 28));
@@ -226,6 +229,8 @@ public class GameGraphic extends JFrame {
             clip.close();
         }
     }
+
+//for showing cards
     public void initCenterPnl(){
         firstPnl.setName("firstPnl");
         secondPnl.setName("secondPnl");

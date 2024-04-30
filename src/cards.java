@@ -1,3 +1,4 @@
+//This class is for making cards on screen
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -136,7 +137,7 @@ public class cards {
         }
 
     }
-
+//creating cards
     public cardInformation firstLevel(cards card1, String imagePath, JPanel panel, boolean giftCard
             , int numberOfCard, int bounds, boolean isHold, int numberCard){
         JPanel cardMain = new JPanel();
@@ -204,7 +205,7 @@ public class cards {
         buttonPnl.setBackground(background);
         return new cardInformation(imagePath, gift, value,  scoreCard, giftCard, false, true, cardMain, numberCard);
     }
-
+//creating coins that set on cards
     public static class CircleLabel extends JLabel {
         private final String text;
         private final Color color;
